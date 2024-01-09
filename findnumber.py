@@ -2,6 +2,7 @@ import websockets, asyncio, json
 
 playerslist = [] 
 roomslist = []
+
 def PlayersList(action, username, current = None):
     if action == "View":
         return playerslist
@@ -18,6 +19,20 @@ def PlayersList(action, username, current = None):
         playerslist.append(username)
         return playerslist
 
+def RoomsList(action, roomname, username):
+    if action == "View":
+        return roomslist
+    if action == "Add":
+        if roomname in roomslist:
+            return None
+        roomslist.append(roomname)
+        if username in roomslist[roomname][0]:
+            return roomslist
+        roomslist[roomname].append([["owner: " + username, "points: 0"], ["playerslistroom: " + username, "points: 0"]])
+        return roomslist
+    if action == "Remove":
+        roomslist.remove(roomname)
+        return roomslist
 
 async def handler(websocket):
     async for message in websocket:
