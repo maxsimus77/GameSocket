@@ -22,14 +22,18 @@ def PlayersList(action, username, current = None):
 def RoomsList(action, roomname, username):
     if action == "View":
         return roomslist
-    if action == "Add":
-        if roomname in roomslist:
-            return None
-        roomslist.append(roomname)
-        if username in roomslist[roomname][0]:
-            return roomslist
-        roomslist[roomname].append([["owner: " + username, "points: 0"], ["playerslistroom: " + username, "points: 0"]])
+    if action == "Create":
+        for i in roomslist:
+            if roomname in i:
+                return None
+        roomslist.append({roomname: {"owner": {username: 0}, "guests": {}}})
         return roomslist
+    if action == "Join":
+        for i in roomslist:
+            if roomname in i:
+                i[roomname]["guests"][username].append(0)
+                return roomslist
+        return None
     if action == "Remove":
         roomslist.remove(roomname)
         return roomslist
