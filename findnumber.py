@@ -19,7 +19,7 @@ def PlayersList(action, username, current = None):
         playerslist.append(username)
         return playerslist
 
-def RoomsList(action, roomname, username):
+def RoomsList(action, roomname = None, username = None):
     if action == "View":
         return roomslist
     if action == "Create":
@@ -31,17 +31,20 @@ def RoomsList(action, roomname, username):
     if action == "Join":
         for i in roomslist:
             if roomname in i:
-                i[roomname]["guests"][username].append(0)
+                i[roomname]["guests"][username] = 0
                 return roomslist
-        return None
+        return "Room not exist"
     if action == "Remove":
         roomslist.remove(roomname)
         return roomslist
+    
+def points(roomname, username):
+    pass
 
 async def handler(websocket):
     async for message in websocket:
         message = json.loads(message)
-        if(message["type"] == "player"):
+        if message["type"] == "player":
             try:
                 playerslist = PlayersList(message["action"], message["username"], message["current"])
             except:
@@ -50,7 +53,20 @@ async def handler(websocket):
                 await websocket.send("Username already taken")
             else:
                 await websocket.send(json.dumps(playerslist))
-
+        if message["type"] == "room":
+            try:
+                roomslist = RoomsList(message["action"], message["roomname"], message["username"])
+            except:
+                roomslist = RoomsList(message["action"])
+            if roomslist == None:
+                await websocket.send("Room Name already taken")
+            elif roomslist == "Room not exist":
+                await websocket.send("Room not exist")
+            else:
+                await websocket.send(json.dumps(roomslist))
+        if message["type"] == "points":
+            noti = await websocket.send("Found:", message["num"], " in", message["roomname"])
+            points(message["roomname"], message["username"])
         
 
 
