@@ -1,0 +1,12 @@
+[
+    {"comment": "player action"},
+    {"type": "player", "action": "View", "username": "abc"},
+    {"type": "player", "action": "Add", "username": "abc"},
+    {"type": "player", "action": "Remove", "username": "abc"},
+    {"type": "player", "action": "Change", "username": "abc", "current": "cba"},
+    {"comment": "room action"},
+    {"type": "room", "action": "View"},
+    {"type": "room", "action": "Create", "roomname": "roomtest", "username": "abc"},
+    {"type": "room", "action": "Join", "roomname": "roomtest", "username": "abc1"},
+    {"type": "room", "action": "Remove", "roomname": "roomtest"}
+]

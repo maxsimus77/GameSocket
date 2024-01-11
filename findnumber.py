@@ -41,32 +41,44 @@ def RoomsList(action, roomname = None, username = None):
 def points(roomname, username):
     pass
 
+def validateJSON(jsonData):
+    try:
+        json.loads(jsonData)
+    except ValueError as err:
+        return False
+    return True
+
 async def handler(websocket):
     async for message in websocket:
-        message = json.loads(message)
-        if message["type"] == "player":
-            try:
-                playerslist = PlayersList(message["action"], message["username"], message["current"])
-            except:
-                playerslist = PlayersList(message["action"], message["username"])
-            if playerslist == None:
-                await websocket.send("Username already taken")
-            else:
-                await websocket.send(json.dumps(playerslist))
-        if message["type"] == "room":
-            try:
-                roomslist = RoomsList(message["action"], message["roomname"], message["username"])
-            except:
-                roomslist = RoomsList(message["action"])
-            if roomslist == None:
-                await websocket.send("Room Name already taken")
-            elif roomslist == "Room not exist":
-                await websocket.send("Room not exist")
-            else:
-                await websocket.send(json.dumps(roomslist))
-        if message["type"] == "points":
-            noti = await websocket.send("Found:", message["num"], " in", message["roomname"])
-            points(message["roomname"], message["username"])
+        if validateJSON(message) == False:
+            await websocket.send("Hi")
+            return message
+        else:
+            message = json.loads(message)
+            if message["type"] == "player":
+                try:
+                    playerslist = PlayersList(message["action"], message["username"], message["current"])
+                except:
+                    playerslist = PlayersList(message["action"], message["username"])
+                if playerslist == None:
+                    await websocket.send("Username already taken")
+                else:
+                    await websocket.send(json.dumps(playerslist))
+            if message["type"] == "room":
+                try:
+                    roomslist = RoomsList(message["action"], message["roomname"], message["username"])
+                except:
+                    roomslist = RoomsList(message["action"])
+                if roomslist == None:
+                    await websocket.send("Room Name already taken")
+                elif roomslist == "Room not exist":
+                    await websocket.send("Room not exist")
+                else:
+                    await websocket.send(json.dumps(roomslist))
+            if message["type"] == "points":
+                noti = await websocket.send("Found:", message["num"], " in", message["roomname"])
+                points(message["roomname"], message["username"])
+        
         
 
 
